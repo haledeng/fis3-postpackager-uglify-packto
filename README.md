@@ -1,22 +1,23 @@
 # fis3-postpackager-uglify-packto
+A fis plugin to uglify JS file in `ret.pkg` object.
 
-### 安装
+### Install
 ```
 npm i fis3-postpackager-uglify-packto
 ```
 
-### 背景
-fis 配置uglify-js时，一般配置`'**.js'`，压缩慢。
+### Why
+By default, `uglify-js` will be used to uglify all JS files, which has a bad performance.
 
-### 功能
-只压缩`ret.pkg`，即产出的打包文件。
+### Function
+Only uglify JS file in `ret.pkg` object, which contains all packed files.
 
-### 配置
-include: ret.pkg外需要压缩的文件
+### Config
+**include**: other files not in `ret.pkg`.
 ```
-fis.mathc('::package', {
+fis.match('::package', {
 	postpackager: fis.plugin('uglify-packto', {
-		include: [filesubpath] 
+		include: [path1, path2, ..., pathn]
 	})
 })
 ```

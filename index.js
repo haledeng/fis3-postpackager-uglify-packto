@@ -1,42 +1,48 @@
 /*
- * 只要所pkg中打包的文件, 提高压缩速度
+ * only uglify JS files in ret.pkg object.
+ * promote uglify performance.
  */
 var fs = require('fs');
 var UglifyJS = require('uglify-js');
-var toString = Object.prototype.toString;
 
+// uglify content
 var uglify = function(content) {
 	return UglifyJS.minify(content, {
 		fromString: true
 	}).code;
 };
 
+
+// uglify file content
+var uglifyFile = function(file) {
+	var content = file.getContent();
+	content = uglify(content);
+	file.setContent(content);
+};
+
 module.exports = function(ret, conf, setting, opts) {
 	var pkg = ret.pkg,
 		ids = Object.keys(pkg);
-	var file,
-		content;
+	var file;
+	// uglify file in ret.pkg
 	ids.forEach(function(id) {
 		file = pkg[id];
 		if (!file) {
-			fis.log.debug('file ' + file + ' is not exists from uglify-packto');
+			fis.log.debug('file ' + file + ' does not exist from uglify-packto');
 			return;
 		}
-		content = file.getContent();
-		content = uglify(content);
-		file.setContent(content);
+		uglifyFile(file);
 	});
 	var include = setting.include || [];
+	// all subpath info.
 	ids = Object.keys(ret.ids);
 
-	if (include && toString.call(include) === '[object Array]') {
-		var subpaths = [];
+	// uglify files in config
+	if (include.length) {
 		ids.forEach(function(id) {
 			if (~include.indexOf(ret.ids[id].subpath)) {
 				file = ret.ids[id];
-				content = file.getContent();
-				content = uglify(content);
-				file.setContent(content);
+				uglifyFile(file);
 			}
 		});
 	}
